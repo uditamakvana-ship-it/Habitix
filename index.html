@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Habitix | Premium Habit Tracker</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <!-- Styles -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <!-- Auth Container -->
+    <div id="auth-container" class="auth-container">
+        <div class="auth-left">
+            <div class="auth-logo">
+                <i class="ph-fill ph-planet"></i>
+                <span>Habitix</span>
+            </div>
+            <div class="auth-hero-text">
+                <h1>Build Better Habits,<br>One Day at a Time.</h1>
+                <p>Track your life, visualize your progress, and achieve your goals with the world's most premium habit
+                    tracker.</p>
+            </div>
+            <div class="auth-decoration">
+                <!-- Abstract circles or glass effect -->
+                <div class="circle c1"></div>
+                <div class="circle c2"></div>
+            </div>
+        </div>
+        <div class="auth-right">
+            <div class="auth-card">
+                <div class="auth-header">
+                    <h2 id="auth-title">Welcome Back</h2>
+                    <p id="auth-subtitle">Enter your details to access your account.</p>
+                </div>
+
+                <form id="auth-form" onsubmit="event.preventDefault(); handleAuth();">
+                    <div class="form-group" id="name-group" style="display:none;">
+                        <label>Full Name</label>
+                        <input type="text" id="auth-name" placeholder="John Doe">
+                    </div>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" id="auth-email" placeholder="name@example.com">
+                    </div>
+                    <div class="form-group">
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <label>Password</label>
+                            <a href="#" style="font-size:0.8rem; color:var(--accent-primary); text-decoration:none;"
+                                onclick="alert('Reset password feature coming soon!')">Forgot?</a>
+                        </div>
+                        <input type="password" id="auth-password" placeholder="••••••••">
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-full" id="auth-submit-btn">Sign In</button>
+                </form>
+
+                <div class="auth-footer">
+                    <p id="auth-switch-text">Don't have an account? <a href="#" onclick="toggleAuthMode()">Sign Up</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dashboard Container (Hidden by default) -->
+    <div id="dashboard-container" style="display: none;">
+        <div class="app-container">
+            <!-- Sidebar Navigation -->
+            <nav class="sidebar">
+                <div class="logo">
+                    <i class="ph-fill ph-planet"></i>
+                    <span>Habitix</span>
+                </div>
+
+                <ul class="nav-links">
+                    <li class="active" data-tab="dashboard">
+                        <i class="ph ph-squares-four"></i>
+                        <span>Dashboard</span>
+                    </li>
+                    <li data-tab="journal">
+                        <i class="ph ph-notebook"></i>
+                        <span>Journal</span>
+                    </li>
+                    <li data-tab="analytics">
+                        <i class="ph ph-chart-line-up"></i>
+                        <span>Analytics</span>
+                    </li>
+                    <li data-tab="calendar">
+                        <i class="ph ph-calendar"></i>
+                        <span>Calendar</span>
+                    </li>
+                </ul>
+
+                <div class="user-profile">
+                    <div class="avatar">
+                        <i class="ph-fill ph-user"></i>
+                    </div>
+                    <div class="user-info">
+                        <span class="name" id="profile-name">User</span>
+                        <span class="level-badge">Lvl <span id="user-level">1</span></span>
+                    </div>
+                    <button class="btn-icon-only" onclick="logout()" title="Logout"
+                        style="margin-left: auto; background: none; border: none; color: var(--text-secondary); cursor: pointer;">
+                        <i class="ph-bold ph-sign-out"></i>
+                    </button>
+                </div>
+            </nav>
+
+            <!-- Main Content Area -->
+            <main class="main-content">
+                <header class="top-bar">
+                    <div class="greeting">
+                        <h1 id="greeting-text">Welcome back</h1>
+                        <p class="subtitle">Let's crush your goals today.</p>
+                    </div>
+                    <div class="actions">
+                        <div class="xp-container">
+                            <div class="xp-bar-bg">
+                                <div class="xp-bar-fill" style="width: 0%"></div>
+                            </div>
+                            <span class="xp-text"><span id="current-xp">0</span> / <span id="next-level-xp">100</span>
+                                XP</span>
+                        </div>
+                        <button class="theme-toggle" id="theme-toggle" title="Toggle Theme">
+                            <i class="ph-fill ph-moon"></i>
+                        </button>
+                    </div>
+                </header>
+
+                <!-- Dashboard View -->
+                <section id="dashboard-view" class="view active">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="icon-box blue"><i class="ph-fill ph-check-circle"></i></div>
+                            <div>
+                                <h3>Completed</h3>
+                                <p id="total-completed">0</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="icon-box purple"><i class="ph-fill ph-flame"></i></div>
+                            <div>
+                                <h3>Current Streak</h3>
+                                <p id="current-streak">0 Days</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section-header">
+                        <h2>Your Habits</h2>
+                        <button class="btn btn-primary" id="add-habit-btn">
+                            <i class="ph-bold ph-plus"></i> New Habit
+                        </button>
+                    </div>
+
+                    <div class="habits-list" id="habits-list">
+                        <!-- Habits rendered here -->
+                        <div class="empty-state">
+                            <p>No habits yet. Start by adding one!</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Journal View -->
+                <section id="journal-view" class="view">
+                    <div class="section-header">
+                        <h2>Daily Journal</h2>
+                        <button class="btn btn-primary" id="new-entry-btn">
+                            <i class="ph-bold ph-pencil-simple"></i> Write Today
+                        </button>
+                    </div>
+                    <div class="journal-search">
+                        <i class="ph ph-magnifying-glass"></i>
+                        <input type="text" placeholder="Search entries..." id="journal-search-input">
+                    </div>
+                    <div class="journal-grid" id="journal-list">
+                        <!-- Entries rendered here -->
+                    </div>
+                </section>
+
+                <!-- Analytics View -->
+                <section id="analytics-view" class="view">
+                    <div class="section-header">
+                        <h2>Weekly Progress</h2>
+                    </div>
+
+                    <div class="analytics-container">
+                        <div class="card chart-card">
+                            <div class="chart-header">
+                                <h3>Last 7 Days Activity</h3>
+                            </div>
+                            <div class="bar-chart" id="weekly-chart">
+                                <!-- Bars injected via JS -->
+                            </div>
+                            <div class="chart-labels" id="weekly-labels">
+                                <!-- Labels injected via JS -->
+                            </div>
+                        </div>
+
+                        <div class="stats-grid" style="margin-top: 2rem;">
+                            <div class="stat-card">
+                                <div class="icon-box blue"><i class="ph-fill ph-trend-up"></i></div>
+                                <div>
+                                    <h3>Completion Rate</h3>
+                                    <p id="completion-rate">0%</p>
+                                </div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="icon-box purple"><i class="ph-fill ph-calendar-check"></i></div>
+                                <div>
+                                    <h3>Best Day</h3>
+                                    <p id="best-day">-</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Calendar View -->
+                <section id="calendar-view" class="view">
+                    <div class="section-header">
+                        <h2>Calendar & Occasions</h2>
+                        <div class="calendar-controls">
+                            <button class="btn btn-secondary" id="prev-month"><i
+                                    class="ph-bold ph-caret-left"></i></button>
+                            <h3 id="current-month-year">December 2025</h3>
+                            <button class="btn btn-secondary" id="next-month"><i
+                                    class="ph-bold ph-caret-right"></i></button>
+                        </div>
+                    </div>
+
+                    <div class="calendar-container card">
+                        <div class="calendar-weekdays">
+                            <div>Sun</div>
+                            <div>Mon</div>
+                            <div>Tue</div>
+                            <div>Wed</div>
+                            <div>Thu</div>
+                            <div>Fri</div>
+                            <div>Sat</div>
+                        </div>
+                        <div class="calendar-days" id="calendar-grid">
+                            <!-- Days injected via JS -->
+                        </div>
+                    </div>
+
+                    <div class="occasions-list" id="occasions-display">
+                        <!-- Selected day's occasions shown here -->
+                    </div>
+                </section>
+
+            </main>
+        </div>
+
+        <!-- Modals -->
+        <div class="modal-overlay" id="habit-modal">
+            <div class="modal">
+                <div class="modal-header">
+                    <h3>Create New Habit</h3>
+                    <button class="close-modal"><i class="ph ph-x"></i></button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Habit Name</label>
+                        <input type="text" id="habit-name" placeholder="e.g. Read 10 pages">
+                    </div>
+                    <div class="form-group">
+                        <label>Icon</label>
+                        <div class="icon-selector" id="icon-selector">
+                            <button class="icon-btn selected" data-icon="ph-book"><i
+                                    class="ph-fill ph-book"></i></button>
+                            <button class="icon-btn" data-icon="ph-barbell"><i class="ph-fill ph-barbell"></i></button>
+                            <button class="icon-btn" data-icon="ph-drop"><i class="ph-fill ph-drop"></i></button>
+                            <button class="icon-btn" data-icon="ph-code"><i class="ph-fill ph-code"></i></button>
+                            <button class="icon-btn" data-icon="ph-leaf"><i class="ph-fill ph-leaf"></i></button>
+                            <button class="icon-btn" data-icon="ph-moon-stars"><i
+                                    class="ph-fill ph-moon-stars"></i></button>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary close-modal">Cancel</button>
+                    <button class="btn btn-primary" id="save-habit-btn">Create Habit</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-overlay" id="journal-modal">
+            <div class="modal modal-lg">
+                <div class="modal-header">
+                    <h3>User Journal</h3> <!-- Dynamic Date -->
+                    <button class="close-modal"><i class="ph ph-x"></i></button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Title</label>
+                        <input type="text" id="journal-title" placeholder="How was your day?">
+                    </div>
+                    <div class="form-group">
+                        <textarea id="journal-content" placeholder="Write your thoughts here..." rows="10"></textarea>
+                    </div>
+                    <div class="mood-selector">
+                        <label>Mood:</label>
+                        <div class="mood-options" id="mood-selector">
+                            <button data-mood="happy" class="selected">😊</button>
+                            <button data-mood="neutral">😐</button>
+                            <button data-mood="sad">😔</button>
+                            <button data-mood="tired">😴</button>
+                            <button data-mood="excited">🤩</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary close-modal">Discard</button>
+                    <button class="btn btn-primary" id="save-journal-btn">Save Entry</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Occasion Modal -->
+        <div class="modal-overlay" id="occasion-modal">
+            <div class="modal">
+                <div class="modal-header">
+                    <h3>Add Occasion</h3>
+                    <button class="close-modal"><i class="ph ph-x"></i></button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Occasion Title</label>
+                        <input type="text" id="occasion-title" placeholder="e.g. Birthday, Holiday">
+                    </div>
+                    <div class="form-group">
+                        <label>Color</label>
+                        <div class="icon-selector" id="color-selector">
+                            <button class="icon-btn selected" data-color="#ef4444"
+                                style="background-color: #ef444420; color: #ef4444;"><i
+                                    class="ph-fill ph-circle"></i></button>
+                            <button class="icon-btn" data-color="#f59e0b"
+                                style="background-color: #f59e0b20; color: #f59e0b;"><i
+                                    class="ph-fill ph-circle"></i></button>
+                            <button class="icon-btn" data-color="#10b981"
+                                style="background-color: #10b98120; color: #10b981;"><i
+                                    class="ph-fill ph-circle"></i></button>
+                            <button class="icon-btn" data-color="#3b82f6"
+                                style="background-color: #3b82f620; color: #3b82f6;"><i
+                                    class="ph-fill ph-circle"></i></button>
+                            <button class="icon-btn" data-color="#8b5cf6"
+                                style="background-color: #8b5cf620; color: #8b5cf6;"><i
+                                    class="ph-fill ph-circle"></i></button>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary close-modal">Cancel</button>
+                    <button class="btn btn-primary" id="save-occasion-btn">Add Occasion</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Toast Notification -->
+        <div id="toast" class="toast">Action Saved</div>
+
+        <script src="script.js"></script>
+</body>
+
+</html>
+</div>
